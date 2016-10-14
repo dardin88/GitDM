@@ -1,0 +1,5 @@
+rootProject.name = 'gitdmGradle'
+include ':core'
+include ':scattering'
+include ':newcomers'
+include ':initRepo'
