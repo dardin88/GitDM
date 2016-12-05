@@ -2,7 +2,6 @@ package it.unisa.gitdm.experiments;
 
 import it.unisa.gitdm.algorithm.Process;
 import it.unisa.gitdm.bean.Commit;
-import it.unisa.gitdm.bean.Period;
 import it.unisa.gitdm.scattering.DeveloperTreeManager;
 import it.unisa.gitdm.scattering.PeriodManager;
 
