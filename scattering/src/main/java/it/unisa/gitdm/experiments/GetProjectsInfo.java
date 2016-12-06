@@ -32,7 +32,7 @@ class GetProjectsInfo {
         Checkout checkout = new Checkout(projectName, periodLength, baseFolderPath, scatteringFolderPath, initRepository);
         Process process = new it.unisa.gitdm.algorithm.Process();
         process.initGitRepositoryFromFile(baseFolderPath + projectName + "/gitRepository.data");
-        CalculateBuggyFiles calculateBuggyFiles = new CalculateBuggyFiles(scatteringFolderPath, projectName, issueTracker, issueTrackerPath, productName, initIssueTracker, initRepository, isSVN);
+        CalculateBuggyFiles calculateBuggyFiles = new CalculateBuggyFiles(scatteringFolderPath, projectName, issueTracker, issueTrackerPath, productName, isSVN);
 
         GitRepository gitRepository = process.getGitRepository();
         List<Commit> commits = gitRepository.getCommits();

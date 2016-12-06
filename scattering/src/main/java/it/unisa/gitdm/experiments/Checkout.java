@@ -21,19 +21,18 @@ public class Checkout {
             process.initGitRepository(baseFolderPath + projectName);
             File scatteringProjectFolder = new File(scatteringFolderPath + projectName);
             scatteringProjectFolder.mkdirs();
-            process.saveGitRepository(scatteringFolderPath + projectName + "/gitRepository.data");
+            process.saveGitRepository(scatteringFolderPath + File.separator + projectName + File.separator + "gitRepository.data");
         } else {
-            process.initGitRepositoryFromFile(scatteringFolderPath + projectName
-                    + "/gitRepository.data");
+            process.initGitRepositoryFromFile(scatteringFolderPath + File.separator + projectName + File.separator + "gitRepository.data");
         }
-        File developerChangesPath = new File(scatteringFolderPath + projectName + "/"
-                + periodLength + "/");
+        File developerChangesPath = new File(scatteringFolderPath + File.separator + projectName + File.separator
+                + periodLength + File.separator);
         developerChangesPath.mkdirs();
-        File developersChanges = new File(scatteringFolderPath + projectName + "/"
-                + periodLength + "/developersChanges.data");
+        File developersChanges = new File(scatteringFolderPath + File.separator + projectName + File.separator
+                + periodLength + File.separator + "developersChanges.data");
         System.out.println("Init done");
         try (OutputStream file = new FileOutputStream(developersChanges);
-             ObjectOutput output = new ObjectOutputStream(file)) {
+                ObjectOutput output = new ObjectOutputStream(file)) {
             List<Commit> commits = process.getGitRepository().getCommits();
             System.out.println("Number of Commits: " + commits.size());
             PeriodManager.calculatePeriods(commits, periodLength);
@@ -44,6 +43,6 @@ public class Checkout {
         } catch (Exception ex) {
             Logger.getLogger(Checkout.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.out.println("Data saved in " + scatteringFolderPath + projectName + "/developersChanges.data");
+        System.out.println("Data saved in " + scatteringFolderPath + File.separator + projectName + File.separator + "developersChanges.data");
     }
 }

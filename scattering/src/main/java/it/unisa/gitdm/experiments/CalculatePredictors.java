@@ -1,6 +1,8 @@
 package it.unisa.gitdm.experiments;
 
+import it.unisa.gitdm.algorithm.Period;
 import it.unisa.gitdm.algorithm.Process;
+import it.unisa.gitdm.algorithm.ProjectStatistics;
 import it.unisa.gitdm.bean.*;
 import it.unisa.gitdm.metrics.CKMetrics;
 import it.unisa.gitdm.metrics.ReadSourceCode;
@@ -23,12 +25,12 @@ import java.util.logging.Logger;
 class CalculatePredictors {
 
     public CalculatePredictors(String projectName, String issueTracker, String issueTrackerPath,
-                               String productName, String periodLength, String baseFolderPath,
-                               String scatteringFolderPath) {
+            String productName, String periodLength, String baseFolderPath,
+            String scatteringFolderPath) {
 
         Process process = new Process();
 
-        process.initGitRepositoryFromFile(scatteringFolderPath + "/" + projectName
+        process.initGitRepositoryFromFile(scatteringFolderPath + File.separator + projectName
                 + "/gitRepository.data");
 
         // Calculate developer trees
@@ -47,23 +49,21 @@ class CalculatePredictors {
         List<Period> periods = PeriodManager.getList();
 
         // Load files and folders
-        ScatteringMetricsParser structuralMP = new ScatteringMetricsParser();
-        ScatteringMetricsParser semanticalMP = new ScatteringMetricsParser();
-        File structuralScatteringFile = new File(scatteringFolderPath + projectName + "/"
-                + periodLength + "/structuralScattering.csv");
-        File semanticScatteringFile = new File(scatteringFolderPath + projectName + "/"
-                + periodLength + "/semanticScattering.csv");
-
+//        ScatteringMetricsParser structuralMP = new ScatteringMetricsParser();
+//        ScatteringMetricsParser semanticalMP = new ScatteringMetricsParser();
+//        File structuralScatteringFile = new File(scatteringFolderPath + projectName + "/"
+//                + periodLength + "/structuralScattering.csv");
+//        File semanticScatteringFile = new File(scatteringFolderPath + projectName + "/"
+//                + periodLength + "/semanticScattering.csv");
         // Load developer scattering metrics
         try {
-            structuralMP.parseFile(structuralScatteringFile);
-            semanticalMP.parseFile(semanticScatteringFile);
+//            structuralMP.parseFile(structuralScatteringFile);
+//            semanticalMP.parseFile(semanticScatteringFile);
 
             // Calculating file complexity
             for (Period p : periods) {
 
-                String periodsFolderPath = scatteringFolderPath + projectName + "/" + periodLength
-                        + "/periodsData_1/";
+                String periodsFolderPath = scatteringFolderPath + projectName + File.separator + periodLength + "/periodsData_1/";
 
                 File periodsFolder = new File(periodsFolderPath);
                 periodsFolder.mkdirs();
@@ -77,10 +77,11 @@ class CalculatePredictors {
                 pw1.write("name,"
                         + "LOC,CBO,LCOM,NOM,RFC,WMC,"
                         + "numOfChanges," + "numberOfFIChanges,"
-                        + "structuralScatteringSum,semanticScatteringSum,"
+                        + "numOfEnhancement," + "numOfNewFeature," + "numOfBugFixing," + "numOfRefactoring," + "numOfPastFaults,"
+                        //                        + "structuralScatteringSum,semanticScatteringSum,"
                         + "numberOfDeveloper," + "isBuggy\n");
 
-                CalculateBuggyFiles cbf = new CalculateBuggyFiles(scatteringFolderPath, projectName, issueTracker, issueTrackerPath, productName, false, false, false);
+                CalculateBuggyFiles cbf = new CalculateBuggyFiles(scatteringFolderPath, projectName, issueTracker, issueTrackerPath, productName, false);
 
                 List<FileBean> periodBuggyFiles = cbf.getBuggyFiles();
 
@@ -99,6 +100,12 @@ class CalculatePredictors {
 
                 List<FileBean> repoFiles = Git.gitList(new File(projectPath), c, workTreeFolder);
 
+                int noe = ProjectStatistics.getNumberOfEnhancements(projectPath, process, p);
+                int nonf = ProjectStatistics.getNumberOfNewFeatures(projectPath, process, p);
+                int nobf = ProjectStatistics.getNumberOfBugFixing(projectPath, process, p);
+                int nor = ProjectStatistics.getNumberOfRefactoring(projectPath, process, p);
+                int nopf = ProjectStatistics.getNumberOfPastFault(projectPath, process, p, periods);
+
                 for (FileBean file : repoFiles) {
                     double LOC = 0;
                     double CBO = 0;
@@ -108,7 +115,7 @@ class CalculatePredictors {
                     double WMC = 0;
 
                     if (file.getPath().contains(".java")) {
-                        File workTreeFile = new File(workTreeFolder + "/" + file.getPath());
+                        File workTreeFile = new File(workTreeFolder + File.separator + file.getPath());
 
                         ClassBean classBean;
 
@@ -127,10 +134,9 @@ class CalculatePredictors {
                                 WMC = CKMetrics.getWMC(classBean);
                             }
 
-                            double structuralFileScattering = 0;
-
-                            double semanticFileScattering = 0;
-
+//                            double structuralFileScattering = 0;
+//
+//                            double semanticFileScattering = 0;
                             int numberOfChanges = 0;
                             double numberOfFIChanges = 0;
                             String message1 = "";
@@ -138,10 +144,10 @@ class CalculatePredictors {
                             List<Developer> developersOnFile = DeveloperTreeManager.getDevelopersOnFile(file, p.getId());
 
                             for (Developer developer : developersOnFile) {
-                                double structuralScattering = structuralMP.getMetrics(developer.getEmail(), p.getId(),
-                                        ScatteringType.AVERAGE).getValue();
-                                double semanticScattering = semanticalMP.getMetrics(developer.getEmail(), p.getId(),
-                                        ScatteringType.AVERAGE).getValue();
+//                                double structuralScattering = structuralMP.getMetrics(developer.getEmail(), p.getId(),
+//                                        ScatteringType.AVERAGE).getValue();
+//                                double semanticScattering = semanticalMP.getMetrics(developer.getEmail(), p.getId(),
+//                                        ScatteringType.AVERAGE).getValue();
 
                                 numberOfChanges += DeveloperTreeManager
                                         .getNumberOfChanges(developer,
@@ -151,8 +157,8 @@ class CalculatePredictors {
                                         .getNumberOfChanges(developer,
                                                 p.getId(), file);
 
-                                structuralFileScattering += structuralScattering;
-                                semanticFileScattering += semanticScattering;
+//                                structuralFileScattering += structuralScattering;
+//                                semanticFileScattering += semanticScattering;
                             }
                             boolean isBuggy = false;
 
@@ -173,7 +179,8 @@ class CalculatePredictors {
                             message1 += file.getPath() + ","
                                     + LOC + "," + CBO + "," + LCOM + "," + NOM + "," + RFC + "," + WMC + ","
                                     + numberOfChanges + "," + numberOfFIChanges + ","
-                                    + structuralFileScattering + "," + semanticFileScattering + ","
+                                    + noe + "," + nonf + "," + nobf + "," + nor + "," + nopf + ","
+                                    //                                    + structuralFileScattering + "," + semanticFileScattering + ","
                                     + developersOnFile.size() + "," + isBuggy + "\n";
 
                             pw1.write(message1);
