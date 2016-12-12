@@ -52,7 +52,7 @@ public class LuceneTester {
     numIndexed = indexer.createIndex(dataDir, new TextFileFilter());
     long endTime = System.currentTimeMillis();
     indexer.close();
-    System.out.println(numIndexed+" File indexed, time taken: "+(endTime-startTime)+" ms");		
+    //System.out.println(numIndexed+" File indexed, time taken: "+(endTime-startTime)+" ms");		
    }
 
    private ArrayList<String> search(String searchQuery) throws IOException, ParseException

@@ -5,6 +5,9 @@ import java.util.ArrayList;
 
 
 import bean.Msg;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import search.LuceneTester;
 import store.Store;
 
@@ -21,19 +24,25 @@ public class Test
 
     public static void main(String[] args)
     {
-        Store st=new Store("lucene-general",2014,10,2016,10);
-        //Scarico i messaggi dall'archivio
-        if(st.download())
+        try
         {
-            ArrayList<String> files=LuceneTester.test("\"Fork\"");
-
-            ArrayList<Msg> list_msg=st.analyzer(files);
-            for(int i=0;i<list_msg.size();i++)
+            Store st=new Store("lucene-general",2014,10,2016,10);
+            //Scarico i messaggi dall'archivio
+            if(st.download())
             {
-                System.out.println(list_msg.get(i).toString());
+                ArrayList<String> files=LuceneTester.test("(Fork OR FO)AND general");
+                ArrayList<Msg> list_msg=st.analyzer(files);
+                for(int i=0;i<list_msg.size();i++)
+                {
+                    System.out.println(list_msg.get(i).toString());
+                }
+                st.saveMsgs(list_msg);
             }
-            st.saveMsgs(list_msg);
         }
+        catch(Exception e)
+        {
+            System.out.println(e.getMessage());
+        }
+        
     }
-
 }

@@ -1,5 +1,6 @@
 package store;
 
+import Exceptions.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,12 +10,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import bean.Msg;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
+import java.nio.file.Path;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import org.apache.commons.io.FileUtils;
 
 
@@ -40,60 +42,62 @@ public class Store
         
     public Store(String name_project,int from_year,int from_month,int at_year,int at_month)
     {
+        if(name_project==null)throw new ProjectNameNullException("Project-name null!");
+        if(from_year<2001 || from_year>(new GregorianCalendar()).get(Calendar.YEAR))throw new InvalidYearException("Invalid input from-year!");
+        if(at_year<2001 || at_year>(new GregorianCalendar()).get(Calendar.YEAR))throw new InvalidYearException("Invalid input at-year");
+        if(at_year<from_year)throw new InvalidAtYearException("Invalid input at-year!");
+        if(from_month<1 || from_month>12)throw new InvalidMonthException("Invalid input from-month!");
+        if(at_month<1 || at_month>12)throw new InvalidMonthException("Invalid input at-month!");
+        if(from_month==at_month && from_month>at_month)throw new InvalidMonthException("Invalid input from-month,at-month!");
+       
         this.name_project=name_project;
         this.from_month=from_month;
         this.from_year=from_year;
         this.at_year=at_year;
         this.at_month=at_month;
         this.url_base="http://mail-archives.apache.org/mod_mbox/"+this.name_project;
-
-        try
+       
+        this.dir_output_msg=new File("C:\\Users\\depiano.it\\Desktop\\store_messages\\output");
+        this.dir_store = new File("C:\\Users\\depiano.it\\Desktop\\store_messages");
+        this.dir_split_msgs=new File("C:\\Users\\depiano.it\\Desktop\\store_messages\\messages");
+            
+        if (this.dir_store.exists())
         {
-            this.dir_output_msg=new File("C:\\Users\\depiano.it\\Desktop\\store_messages\\output");
-            this.dir_store = new File("C:\\Users\\depiano.it\\Desktop\\store_messages");
-            this.dir_split_msgs=new File("C:\\Users\\depiano.it\\Desktop\\store_messages\\messages");
-
-            if (this.dir_store.exists())
-            {
-                File[] files = this.dir_store.listFiles();
-                for(int i=0;i<files.length;i++)
-                    if(files[i].isFile())
-                        files[i].delete();
-            }
-            else
-                this.dir_store.mkdir();
-
-            if(this.dir_split_msgs.exists())
-            {
-                File[] files=this.dir_split_msgs.listFiles();
-                for(int i=0;i<files.length;i++)
-                    if(files[i].isFile())
-                        files[i].delete();
-            }
-            else
-                this.dir_split_msgs.mkdir();
-
-           if(this.dir_output_msg.exists())
-           {
-                File[] files=this.dir_output_msg.listFiles();
-                for(int i=0;i<files.length;i++)
-                    if(files[i].isFile())
-                        files[i].delete();
-           }
-           else
-               this.dir_output_msg.mkdir();
+            File[] files = this.dir_store.listFiles();
+            for(int i=0;i<files.length;i++)
+                if(files[i].isFile())
+                    files[i].delete();
         }
-        catch(Exception e)
+        else
+            this.dir_store.mkdir();
+
+        if(this.dir_split_msgs.exists())
         {
-            e.getMessage();
+            File[] files=this.dir_split_msgs.listFiles();
+            for(int i=0;i<files.length;i++)
+                if(files[i].isFile())
+                    files[i].delete();
         }
+        else
+            this.dir_split_msgs.mkdir();
+
+       if(this.dir_output_msg.exists())
+       {
+            File[] files=this.dir_output_msg.listFiles();
+            for(int i=0;i<files.length;i++)
+                if(files[i].isFile())
+                    files[i].delete();
+       }
+       else
+           this.dir_output_msg.mkdir();
     }
 	
     public Boolean download()
     {
         try
         {
-            do
+            System.out.println("\nPlease wait...\nDownloads messages...\n");;
+            do 
             {
                 URL url;
                 File destination;
@@ -137,149 +141,146 @@ public class Store
         }
         catch (IOException e)
         {
-           e.printStackTrace();
            return false;
         }
     }
 	
-    public void splitMsgs()
+    public void splitMsgs()throws IOException
     {
-        try
+        File[] files = this.dir_store.listFiles();
+        if(files!=null)
         {
-            File[] files = this.dir_store.listFiles();
-            if(files!=null)
+            int count=0;
+            FileReader f;
+            PrintWriter out;
+            BufferedReader b;
+            for(int i=0;i<files.length;i++)
             {
-                int count=0;
-                FileReader f;
-                PrintWriter out;
-                BufferedReader b;
-                for(int i=0;i<files.length;i++)
+                if(files[i].isFile())
                 {
-                    if(files[i].isFile())
+                    f = new FileReader(files[i]);
+                    b =new BufferedReader(f);
+
+                    out=new PrintWriter(new FileWriter(this.dir_split_msgs+"\\msg"+Integer.toString(count)+".txt",true));
+
+                    int flag=0;
+
+                    while(b.ready())
                     {
-                        f = new FileReader(files[i]);
-                        b =new BufferedReader(f);
+                        String read_file=b.readLine();
 
-                        out=new PrintWriter(new FileWriter(this.dir_split_msgs+"\\msg"+Integer.toString(count)+".txt",true));
-
-                        int flag=0;
-
-                        while(b.ready())
+                        if(read_file.indexOf("From ")>-1 && flag!=0)
                         {
-                            String read_file=b.readLine();
-
-                            if(read_file.indexOf("From ")>-1 && flag!=0)
-                            {
-                                count+=1;
-                                out.close();
-                                out=new PrintWriter(new FileWriter(this.dir_split_msgs+"\\msg"+Integer.toString(count)+".txt",true));
-                            }
-                            out.append(read_file+"\n");
-                                flag=1;
+                            count+=1;
+                            out.close();
+                            out=new PrintWriter(new FileWriter(this.dir_split_msgs+"\\msg"+Integer.toString(count)+".txt",true));
                         }
-                        b.close();
+                        out.append(read_file+"\n");
+                            flag=1;
                     }
+                    b.close();
                 }
             }
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
         }	
     }
 	
-    public ArrayList<Msg> analyzer(ArrayList<String> paths_files)
+    public ArrayList<Msg> analyzer(ArrayList<String> paths_files)throws IOException
     {
+        if(paths_files==null)throw new PathFileNullException("Path File Null!");
+        if(paths_files.size()==0)throw new PathsFilesZeroException("Nessun path file in input!");
         ArrayList<Msg> list=new ArrayList<Msg>();
-        try
-        {
-            FileReader f;
-            BufferedReader b;
-            int flag0,flag1;
+        FileReader f;
+        BufferedReader b;
+        int flag0,flag1;
 
-            for(int i=0;i<paths_files.size();i++)
+        for(int i=0;i<paths_files.size();i++)
+        {
+            f = new FileReader(paths_files.get(i));
+            b =new BufferedReader(f);
+
+            Msg m=new Msg();
+            flag0=0;
+            flag1=0;
+            while(b.ready())
             {
-                f = new FileReader(paths_files.get(i));
-                b =new BufferedReader(f);
+                String read_file=b.readLine();
 
-                Msg m=new Msg();
-                flag0=0;
-                flag1=0;
-                while(b.ready())
+                int index=-1;
+
+                if((index=read_file.indexOf("To: "))>-1 && index==0 && m.getTo()==null)
                 {
-                    String read_file=b.readLine();
-
-                    int index=-1;
-
-                    if((index=read_file.indexOf("To: "))>-1 && index==0 && m.getTo()==null)
-                    {
-                        flag0=0;
-                        flag1=0;
-                        m.setTo(read_file.substring("To: ".length(), read_file.length()));
-                    }
-
-                    if((index=read_file.indexOf("Date: "))>-1 && index==0 && m.getDate()==null)
-                    {
-                        flag0=0;
-                        flag1=0;
-                        m.setDate(read_file.substring("Date: ".length(), read_file.length()));
-                    }
-
-                    if((index=read_file.indexOf("Subject: "))>-1 && index==0 && m.getSubject()==null)
-                    {
-                        flag0=0;
-                        flag1=0;
-                        m.setSubject(read_file.substring("Subject: ".length(), read_file.length()));
-                    }
-
-                    if((index=read_file.indexOf("Message-ID: "))>-1 && index==0 && m.getMessage_id()==null)
-                    {
-                        flag0=0;
-                        flag1=0;
-                        m.setMessage_id(read_file.substring("Message-ID: ".length(), read_file.length()));
-                    }
-
-                    if((index=read_file.indexOf("In-Reply-To: "))>-1 && index==0 && m.getInReplyTO()==null)
-                    {
-                        flag0=0;
-                        flag1=0;
-                        m.setInReplyTO(read_file.substring("In-Reply-To: ".length(), read_file.length()));
-                    }
-
-                    if((index=read_file.indexOf(":"))>-1)
-                        flag0=1;
-                    if(read_file.equals(""))
-                        flag1=1;
-                    if(flag0==1 && flag1==1)
-                        m.appendToContent(read_file);
+                    flag0=0;
+                    flag1=0;
+                    m.setTo(read_file.substring("To: ".length(), read_file.length()));
                 }
-                b.close();
-                list.add(m);
+
+                if((index=read_file.indexOf("Date: "))>-1 && index==0 && m.getDate()==null)
+                {
+                    flag0=0;
+                    flag1=0;
+                    m.setDate(read_file.substring("Date: ".length(), read_file.length()));
+                }
+
+                if((index=read_file.indexOf("Subject: "))>-1 && index==0 && m.getSubject()==null)
+                {
+                    flag0=0;
+                    flag1=0;
+                    m.setSubject(read_file.substring("Subject: ".length(), read_file.length()));
+                }
+
+                if((index=read_file.indexOf("Message-ID: "))>-1 && index==0 && m.getMessage_id()==null)
+                {
+                    flag0=0;
+                    flag1=0;
+                    m.setMessage_id(read_file.substring("Message-ID: ".length(), read_file.length()));
+                }
+
+                if((index=read_file.indexOf("In-Reply-To: "))>-1 && index==0 && m.getInReplyTO()==null)
+                {
+                    flag0=0;
+                    flag1=0;
+                    m.setInReplyTO(read_file.substring("In-Reply-To: ".length(), read_file.length()));
+                }
+
+                if((index=read_file.indexOf(":"))>-1)
+                    flag0=1;
+                if(read_file.equals(""))
+                    flag1=1;
+                if(flag0==1 && flag1==1)
+                    m.appendToContent(read_file);
             }
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
+            b.close();
+            list.add(m);
         }
         return list;
     }
         
-    public void saveMsgs(ArrayList<Msg> list_msg)
+    public void saveMsgs(ArrayList<Msg> list_msg)throws IOException
     {
-        try
+        if(list_msg==null)throw new SaveMsgNullException("Error: Obejct null");
+        if(list_msg.isEmpty())throw new InputEmptySaveMsgException("Error:Object Msg empty ");
+        FileOutputStream fileOut =new FileOutputStream(this.dir_output_msg+"\\output.dat");
+        ObjectOutputStream out = new ObjectOutputStream(fileOut);
+        for(int i=0;i<list_msg.size();i++)
         {
-            FileOutputStream fileOut =new FileOutputStream(this.dir_output_msg+"\\output.dat");
-            ObjectOutputStream out = new ObjectOutputStream(fileOut);
-            for(int i=0;i<list_msg.size();i++)
-            {
-                out.writeObject(list_msg.get(i));
-            }
-            out.close();
-            fileOut.close();
+            out.writeObject(list_msg.get(i));
         }
-        catch(IOException e)
-        {
-            System.out.println(e.getMessage());
-        }
+        out.close();
+        fileOut.close();
+    }
+    
+    public Path getDirOutput()
+    {
+        return this.dir_output_msg.toPath();
+    }
+    
+    public Path getDirSplitMsg()
+    {
+        return this.dir_split_msgs.toPath();
+    }
+    
+    public Path getDirStore()
+    {
+        return this.dir_store.toPath();
     }
 }
