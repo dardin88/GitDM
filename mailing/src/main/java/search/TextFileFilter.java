@@ -15,6 +15,7 @@ import java.io.IOException;
 
 public class TextFileFilter implements FileFilter
 {
+    @Override
     public boolean accept(File pathname)
     {
        if(pathname==null)throw new FileNullException("Error: pathname nullo!");

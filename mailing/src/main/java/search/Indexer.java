@@ -1,5 +1,9 @@
 package search;
 
+import Exceptions.DataDirPathEmptyException;
+import Exceptions.DataDirPathNullException;
+import Exceptions.FileNullException;
+import Exceptions.InvalidDirectoryException;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileReader;
@@ -32,6 +36,7 @@ public class Indexer
 
     public Indexer(String indexDirectoryPath) throws IOException
     {
+        
        //this directory will contain the indexes
        File f=new File(indexDirectoryPath);
        if (f.exists())
@@ -44,7 +49,7 @@ public class Indexer
        this.indexDirectory = FSDirectory.open(new File(indexDirectoryPath).toPath());
 
         //create the indexer
-        this.writer = new IndexWriter(indexDirectory,new IndexWriterConfig(new StandardAnalyzer()));
+        this.writer = new IndexWriter(this.indexDirectory,new IndexWriterConfig(new StandardAnalyzer()));
         this.writer.deleteAll();
     }
 
@@ -55,6 +60,7 @@ public class Indexer
 
     private Document getDocument(File file) throws IOException
     {
+       if(file==null)throw new FileNullException("Error: File NULL!");
        Document document = new Document();
        //index file contents
        TextField contentField = new TextField(LuceneConstants.CONTENTS,new FileReader(file));
@@ -72,6 +78,7 @@ public class Indexer
 
     private void indexFile(File file) throws IOException
     {
+        if(file==null)throw new FileNullException("Error: File NULL!");
        //System.out.println("Indexing "+file.getCanonicalPath());
        Document document = getDocument(file);
        this.writer.addDocument(document);
@@ -79,6 +86,10 @@ public class Indexer
 
     public int createIndex(String dataDirPath, FileFilter filter) throws IOException
     {
+        if(dataDirPath==null) throw new DataDirPathNullException("Error data directory path NULL!");
+        if(dataDirPath.isEmpty()) throw new DataDirPathEmptyException("Error: data directory path empty!");
+        if(filter==null)throw new FileNullException("Error File Filter is NULL!");
+        if(!new File(dataDirPath).isDirectory())throw new InvalidDirectoryException("Error: data directory path is not a directory!");
        //get all files in the data directory
        File[] files = new File(dataDirPath).listFiles();
        for (File file : files)
@@ -89,5 +100,15 @@ public class Indexer
             }
        }
        return this.writer.numDocs();
+    }
+    
+    public IndexWriter getIndexWriter()
+    {
+        return this.writer;
+    }
+    
+    public Directory getIndexDirectory()
+    {
+        return this.indexDirectory;
     }
 }

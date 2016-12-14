@@ -8,6 +8,7 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 
 import bean.Msg;
+import java.io.File;
 import org.apache.lucene.queryparser.classic.ParseException;
 
 /**
@@ -20,46 +21,39 @@ import org.apache.lucene.queryparser.classic.ParseException;
 
 public class LuceneTester {
 	
-   public String indexDir; 
-   public String dataDir;
-   public Indexer indexer;
-   public Searcher searcher;
+   private String indexDir; 
+   private String dataDir;
+   private Indexer indexer;
+   private Searcher searcher;
 
-   public static ArrayList<String> test(String query)
+   public static ArrayList<String> test(String query) throws IOException,ParseException
    {
         ArrayList<String> files=new ArrayList<String>();
-        try
-        {
-            LuceneTester tester=new LuceneTester();
-            tester.indexDir="C:\\Users\\depiano.it\\Desktop\\index";
-            tester.dataDir="C:\\Users\\depiano.it\\Desktop\\store_messages\\messages";
-            tester.createIndex();
-            files=tester.search(query);
-        }
-        catch (IOException | ParseException e)
-        {
-            e.printStackTrace();
-        }
+        LuceneTester tester=new LuceneTester();
+        tester.indexDir="C:\\Users\\depiano.it\\Desktop\\index";
+        tester.dataDir="C:\\Users\\depiano.it\\Desktop\\store_messages\\messages";
+        tester.createIndex();
+        files=tester.search(query);
         return files;
    }
    
    private void createIndex() throws IOException
    {
 	   
-    indexer = new Indexer(indexDir);
+    this.indexer = new Indexer(this.indexDir);
     int numIndexed;
     long startTime = System.currentTimeMillis();	
-    numIndexed = indexer.createIndex(dataDir, new TextFileFilter());
+    numIndexed = this.indexer.createIndex(this.dataDir, new TextFileFilter());
     long endTime = System.currentTimeMillis();
-    indexer.close();
+    this.indexer.close();
     //System.out.println(numIndexed+" File indexed, time taken: "+(endTime-startTime)+" ms");		
    }
 
    private ArrayList<String> search(String searchQuery) throws IOException, ParseException
    {
-        searcher = new Searcher(indexDir);
+        this.searcher = new Searcher(this.indexDir);
         long startTime = System.currentTimeMillis();
-        TopDocs hits = searcher.search(searchQuery);
+        TopDocs hits = this.searcher.search(searchQuery);
         long endTime = System.currentTimeMillis();
 
         System.out.println(hits.totalHits +" documents found. Time :" + (endTime - startTime)+" ms");

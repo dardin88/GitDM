@@ -1,5 +1,8 @@
-package search;
+ package search;
 
+import Exceptions.QueryEmptyException;
+import Exceptions.QueryNullException;
+import Exceptions.ScoreDocNullException;
 import java.io.File;
 import java.io.IOException;
 
@@ -34,12 +37,15 @@ public class Searcher {
    public Searcher(String indexDirectoryPath) throws IOException
    {
       this.indexDirectory =FSDirectory.open(new File(indexDirectoryPath).toPath());
-      indexSearcher = new IndexSearcher(DirectoryReader.open(indexDirectory));
+      indexSearcher = new IndexSearcher(DirectoryReader.open(this.indexDirectory));
       queryParser = new QueryParser(LuceneConstants.CONTENTS,new StandardAnalyzer());  
    }
    
    public TopDocs search( String searchQuery) throws IOException, ParseException
    {
+      if(searchQuery==null)throw new QueryNullException("Error: searchQuery NULL!");
+      if(searchQuery.isEmpty())throw new QueryEmptyException("Error: searchQuery empty!");
+       
       query = queryParser.parse(searchQuery);
       System.out.println(query.toString());
       return indexSearcher.search(query, LuceneConstants.MAX_SEARCH);
@@ -47,6 +53,7 @@ public class Searcher {
 
    public Document getDocument(ScoreDoc scoreDoc) throws CorruptIndexException, IOException
    {
+      if(scoreDoc==null)throw new ScoreDocNullException("Error: input scoreDoc null!");
       return indexSearcher.doc(scoreDoc.doc);	
    }
 }
