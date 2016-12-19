@@ -43,8 +43,8 @@ public class Searcher {
    
    public TopDocs search( String searchQuery) throws IOException, ParseException
    {
-      if(searchQuery==null)throw new QueryNullException("Error: searchQuery NULL!");
-      if(searchQuery.isEmpty())throw new QueryEmptyException("Error: searchQuery empty!");
+      if(searchQuery==null)throw new QueryNullException("Error: query NULL!");
+      if(searchQuery.isEmpty())throw new QueryEmptyException("Error: query empty!");
        
       query = queryParser.parse(searchQuery);
       System.out.println(query.toString());
@@ -53,7 +53,7 @@ public class Searcher {
 
    public Document getDocument(ScoreDoc scoreDoc) throws CorruptIndexException, IOException
    {
-      if(scoreDoc==null)throw new ScoreDocNullException("Error: input scoreDoc null!");
+      if(scoreDoc==null)throw new ScoreDocNullException("Error: scoreDoc null!");
       return indexSearcher.doc(scoreDoc.doc);	
    }
 }

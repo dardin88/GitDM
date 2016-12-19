@@ -26,11 +26,11 @@ public class Test
     {
         try
         {
-            Store st=new Store("lucene-general",2014,10,2016,10);
+            Store st=new Store("lucene-general",2010,10,2010,10);
             //Scarico i messaggi dall'archivio
             if(st.download())
             {
-                ArrayList<String> files=LuceneTester.test("(Fork OR FO)AND general");
+                ArrayList<String> files=LuceneTester.test("Fork");
                 ArrayList<Msg> list_msg=st.analyzer(files);
                 for(int i=0;i<list_msg.size();i++)
                 {
@@ -38,6 +38,8 @@ public class Test
                 }
                 st.saveMsgs(list_msg);
             }
+            else
+                System.out.println("\nError: invalid project name!\n");
         }
         catch(Exception e)
         {

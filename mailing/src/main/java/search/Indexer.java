@@ -60,7 +60,7 @@ public class Indexer
 
     private Document getDocument(File file) throws IOException
     {
-       if(file==null)throw new FileNullException("Error: File NULL!");
+       if(file==null)throw new FileNullException("Error: File is NULL!");
        Document document = new Document();
        //index file contents
        TextField contentField = new TextField(LuceneConstants.CONTENTS,new FileReader(file));
@@ -78,7 +78,7 @@ public class Indexer
 
     private void indexFile(File file) throws IOException
     {
-        if(file==null)throw new FileNullException("Error: File NULL!");
+        if(file==null)throw new FileNullException("Error: File is NULL!");
        //System.out.println("Indexing "+file.getCanonicalPath());
        Document document = getDocument(file);
        this.writer.addDocument(document);
@@ -86,10 +86,10 @@ public class Indexer
 
     public int createIndex(String dataDirPath, FileFilter filter) throws IOException
     {
-        if(dataDirPath==null) throw new DataDirPathNullException("Error data directory path NULL!");
-        if(dataDirPath.isEmpty()) throw new DataDirPathEmptyException("Error: data directory path empty!");
-        if(filter==null)throw new FileNullException("Error File Filter is NULL!");
-        if(!new File(dataDirPath).isDirectory())throw new InvalidDirectoryException("Error: data directory path is not a directory!");
+        if(dataDirPath==null) throw new DataDirPathNullException("Error: directory path is NULL!");
+        if(dataDirPath.isEmpty()) throw new DataDirPathEmptyException("Error: directory path is empty!");
+        if(filter==null)throw new FileNullException("Error: File Filter is NULL!");
+        if(!new File(dataDirPath).isDirectory())throw new InvalidDirectoryException("Error: directory path is not a directory!");
        //get all files in the data directory
        File[] files = new File(dataDirPath).listFiles();
        for (File file : files)

@@ -42,13 +42,13 @@ public class Store
         
     public Store(String name_project,int from_year,int from_month,int at_year,int at_month)
     {
-        if(name_project==null)throw new ProjectNameNullException("Project-name null!");
-        if(from_year<2001 || from_year>(new GregorianCalendar()).get(Calendar.YEAR))throw new InvalidYearException("Invalid input from-year!");
-        if(at_year<2001 || at_year>(new GregorianCalendar()).get(Calendar.YEAR))throw new InvalidYearException("Invalid input at-year");
-        if(at_year<from_year)throw new InvalidAtYearException("Invalid input at-year!");
-        if(from_month<1 || from_month>12)throw new InvalidMonthException("Invalid input from-month!");
-        if(at_month<1 || at_month>12)throw new InvalidMonthException("Invalid input at-month!");
-        if(from_month==at_month && from_month>at_month)throw new InvalidMonthException("Invalid input from-month,at-month!");
+        if(name_project==null)throw new ProjectNameNullException("Error: Project name null!");
+        if(from_year<2001 || from_year>(new GregorianCalendar()).get(Calendar.YEAR))throw new InvalidYearException("Error: Invalid input from-year!\nValid input: 2001<=From-Year<=Current-Year");
+        if(at_year<2001 || at_year>(new GregorianCalendar()).get(Calendar.YEAR))throw new InvalidYearException("Error: Invalid input at-year\nValid input: 2001<=At-Year<=Current-Year AND At-Year>=From-Year");
+        if(at_year<from_year)throw new InvalidAtYearException("Error: Invalid time range!\nNecessarily at-year>=from-year");
+        if(from_month<1 || from_month>12)throw new InvalidMonthException("Error: Invalid input from-month!\n Valid input: 1<=From-month<=12");
+        if(at_month<1 || at_month>12)throw new InvalidMonthException("Error: Invalid input at-month!\nValid input: 1<=At-month<=12");
+        if(from_year==at_year && from_month>at_month)throw new InvalidMonthException("Error: Invalid time range!\nValid input: from-year=at-year AND from-month>at-month!");
        
         this.name_project=name_project;
         this.from_month=from_month;
@@ -186,8 +186,8 @@ public class Store
 	
     public ArrayList<Msg> analyzer(ArrayList<String> paths_files)throws IOException
     {
-        if(paths_files==null)throw new PathFileNullException("Path File Null!");
-        if(paths_files.size()==0)throw new PathsFilesZeroException("Nessun path file in input!");
+        if(paths_files==null)throw new PathFileNullException("Error: Path File Null!");
+        if(paths_files.size()==0)throw new PathsFilesZeroException("Warning: 0 path file found!");
         ArrayList<Msg> list=new ArrayList<Msg>();
         FileReader f;
         BufferedReader b;
@@ -257,8 +257,8 @@ public class Store
         
     public void saveMsgs(ArrayList<Msg> list_msg)throws IOException
     {
-        if(list_msg==null)throw new SaveMsgNullException("Error: Obejct null");
-        if(list_msg.isEmpty())throw new InputEmptySaveMsgException("Error:Object Msg empty ");
+        if(list_msg==null)throw new SaveMsgNullException("Error: msg object null!");
+        if(list_msg.isEmpty())throw new InputEmptySaveMsgException("Error: msg object empty!");
         FileOutputStream fileOut =new FileOutputStream(this.dir_output_msg+"\\output.dat");
         ObjectOutputStream out = new ObjectOutputStream(fileOut);
         for(int i=0;i<list_msg.size();i++)

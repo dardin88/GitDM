@@ -18,7 +18,7 @@ public class TextFileFilter implements FileFilter
     @Override
     public boolean accept(File pathname)
     {
-       if(pathname==null)throw new FileNullException("Error: pathname nullo!");
+       if(pathname==null)throw new FileNullException("Error: path name null!");
        return pathname.getName().toLowerCase().endsWith(".txt");
     }
 }
