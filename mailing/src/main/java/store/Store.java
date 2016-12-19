@@ -49,7 +49,9 @@ public class Store
         if(from_month<1 || from_month>12)throw new InvalidMonthException("Error: Invalid input from-month!\n Valid input: 1<=From-month<=12");
         if(at_month<1 || at_month>12)throw new InvalidMonthException("Error: Invalid input at-month!\nValid input: 1<=At-month<=12");
         if(from_year==at_year && from_month>at_month)throw new InvalidMonthException("Error: Invalid time range!\nValid input: from-year=at-year AND from-month>at-month!");
-       
+        if(name_project.length()<2)throw new InvalidProjectNameException("Error: the project-name must have a minimum of two characters!");
+        if(name_project.length()>25)throw new InvalidProjectNameException("Error: the project-name must have a maximum of twenty five characters!");
+        
         this.name_project=name_project;
         this.from_month=from_month;
         this.from_year=from_year;

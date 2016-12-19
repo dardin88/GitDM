@@ -1,5 +1,6 @@
  package search;
 
+import Exceptions.InvalidQueryException;
 import Exceptions.QueryEmptyException;
 import Exceptions.QueryNullException;
 import Exceptions.ScoreDocNullException;
@@ -44,8 +45,8 @@ public class Searcher {
    public TopDocs search( String searchQuery) throws IOException, ParseException
    {
       if(searchQuery==null)throw new QueryNullException("Error: query NULL!");
-      if(searchQuery.isEmpty())throw new QueryEmptyException("Error: query empty!");
-       
+      if(searchQuery.isEmpty())throw new QueryEmptyException("Error: query empty!\nThe query must have a minimum of one characters!");
+      if(searchQuery.length()>25)throw new InvalidQueryException("Error: The query must have a maximum of twenty five characters!"); 
       query = queryParser.parse(searchQuery);
       System.out.println(query.toString());
       return indexSearcher.search(query, LuceneConstants.MAX_SEARCH);
