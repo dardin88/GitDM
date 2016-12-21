@@ -52,6 +52,12 @@ public class Store
         if(name_project.length()<2)throw new InvalidProjectNameException("Error: the project-name must have a minimum of two characters!");
         if(name_project.length()>25)throw new InvalidProjectNameException("Error: the project-name must have a maximum of twenty five characters!");
         
+        if(from_year==(new GregorianCalendar()).get(Calendar.YEAR))
+            if(from_month>((new GregorianCalendar()).get(Calendar.MONTH)+1))throw new InvalidMonthException("Error: Invalid input from-month!\n");
+            
+        if(at_year==(new GregorianCalendar()).get(Calendar.YEAR))
+            if(at_month>((new GregorianCalendar()).get(Calendar.MONTH)+1))throw new InvalidMonthException("Error: Invalid input at-month!\n");
+        
         this.name_project=name_project;
         this.from_month=from_month;
         this.from_year=from_year;
