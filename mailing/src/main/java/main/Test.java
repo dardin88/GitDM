@@ -26,7 +26,7 @@ public class Test
     {
         try
         {
-            Store st=new Store("lucene-general",2010,10,2016,10);
+            Store st=new Store("lucene-general",2010,10,2010,12);
             //Scarico i messaggi dall'archivio
             if(st.download())
             {
