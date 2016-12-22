@@ -56,3 +56,17 @@ project(':initRepo') {
         compile group: 'commons-io', name: 'commons-io', version: '2.4'
     }
 }
+
+project(':mailing') {
+    if (!hasProperty('mainClass')) {
+        ext.mainClass = 'main.Test'
+    }
+    
+    dependencies {
+        compile project(':core')
+        compile group: 'commons-io', name: 'commons-io', version: '2.4'
+        compile group: 'org.apache.lucene', name: 'lucene-core', version: '6.2.1'
+        compile group: 'org.apache.lucene', name: 'lucene-analyzers-common', version: '6.2.1'
+        compile group: 'org.apache.lucene', name: 'lucene-queryparser', version: '6.2.1'
+    }
+}
