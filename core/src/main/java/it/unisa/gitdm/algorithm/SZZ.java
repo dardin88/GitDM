@@ -76,7 +76,6 @@ public class SZZ {
                 int fixCommitCounter = 0;
                 for (Commit candidate : repository.getCommits()) {
                     if (candidate.getChanges().contains(change)) {
-                        System.out.println("Dentro if");
                         fixCommitCounter = commitCounter;
                     }
                     commitCounter++;

@@ -2,7 +2,7 @@ package it.unisa.gitdm.experiments;
 
 import java.io.IOException;
 
-class CompleteScatteringExperiment {
+class ExtractCompleteSZZDataset {
 
     public static void main(String[] args) throws IOException {
         String bugzillaUrl = "https://issues.apache.org/bugzilla/";
@@ -16,22 +16,16 @@ class CompleteScatteringExperiment {
 //        String antURL = "https://git-wip-us.apache.org/repos/asf/ant.git";
         String lenyaURL = "https://github.com/apache/lenya.git";
 
-
         //FATTO!
-        CompleteScatteringExperiment.mainForARepo("lenya", "3m", "/home/sesa/Development/Repo/",
-                "/home/sesa/Development/scattering/", false, true, "bugzilla", "Lenya", bugzillaUrl, false);
+        ExtractCompleteSZZDataset.mainForARepo("amq", "3m", "/home/dardin88/Desktop/emse_repo/",
+                "/home/dardin88/Desktop/emse_data/", true, true, "jira", "AMQ", jiraUrl, false);
     }
 
     private static void mainForARepo(String projectName, String periodLength,
-                                     String baseFolderPath, String scatteringFolderPath, boolean initRepository, boolean initIssueTracker,
-                                     String issueTracker, String productName, String issueTrackerPath, boolean isSVN) throws IOException {
-
-        //Git.clone(repoURL, isSVN, projectName, baseFolder);
-        Checkout checkout = new Checkout(projectName, periodLength, baseFolderPath, scatteringFolderPath, initRepository);
-        CalculateDeveloperStructuralScattering calculateDeveloperStructuralScattering = new CalculateDeveloperStructuralScattering(projectName, periodLength, scatteringFolderPath);
-        CalculateDeveloperSemanticScattering calculateDeveloperSemanticScattering = new CalculateDeveloperSemanticScattering(projectName, periodLength, baseFolderPath, scatteringFolderPath);
+            String baseFolderPath, String scatteringFolderPath, boolean initRepository, boolean initIssueTracker,
+            String issueTracker, String productName, String issueTrackerPath, boolean isSVN) throws IOException {
+        //Checkout checkout = new Checkout(projectName, periodLength, baseFolderPath, scatteringFolderPath, initRepository);
         CalculateBuggyFiles calculateBuggyFiles = new CalculateBuggyFiles(scatteringFolderPath, projectName, issueTracker, issueTrackerPath, productName, isSVN);
         CalculatePredictors calculatePredictors = new CalculatePredictors(projectName, issueTracker, issueTrackerPath, productName, periodLength, baseFolderPath, scatteringFolderPath);
-        EvaluateMetrics em = new EvaluateMetrics(projectName, issueTracker, issueTrackerPath, productName, periodLength, baseFolderPath, scatteringFolderPath);
     }
 }

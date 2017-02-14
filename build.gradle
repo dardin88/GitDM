@@ -70,3 +70,14 @@ project(':mailing') {
         compile group: 'org.apache.lucene', name: 'lucene-queryparser', version: '6.2.1'
     }
 }
+
+project(':codeReviewExtractor') {
+    if (!hasProperty('mainClass')) {
+        
+    }
+    
+    dependencies {
+        compile group: 'org.json', name: 'json', version: '20160810'
+        compile group: 'org.apache.clerezza.ext', name: 'org.json.simple', version: '0.4'
+    }
+}

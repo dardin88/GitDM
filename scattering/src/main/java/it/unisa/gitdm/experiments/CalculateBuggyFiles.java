@@ -20,29 +20,34 @@ final class CalculateBuggyFiles {
 
     private final List<FileBean> buggyFiles;
 
-    public CalculateBuggyFiles(String scatteringFolderPath, String projectName, String issueTracker, String issueTrackerPath, String productName, boolean initIssueTracker, boolean initRepository, boolean isSVN) throws IOException {
+    public CalculateBuggyFiles(String scatteringFolderPath, String projectName, String issueTracker, String issueTrackerPath, String productName, boolean isSVN) throws IOException {
         System.out.println("Start CalculateBuggyFiles");
         File buggyFilesFile = new File(scatteringFolderPath + File.separator + projectName + File.separator + "buggyFiles.data");
         if (!buggyFilesFile.exists()) {
-            this.initBuggyFiles(scatteringFolderPath, issueTracker, issueTrackerPath, projectName, productName, initRepository, initIssueTracker, isSVN);
+            this.initBuggyFiles(scatteringFolderPath, issueTracker, issueTrackerPath, projectName, productName, isSVN);
         }
         this.buggyFiles = this.loadBuggyFiles(scatteringFolderPath, projectName);
     }
 
-    private void initBuggyFiles(String scatteringFolderPath, String issueTracker, String issueTrackerPath, String projectName, String productName, boolean initRepository, boolean initIssueTracker, boolean isSVN) throws IOException {
+    private void initBuggyFiles(String scatteringFolderPath, String issueTracker, String issueTrackerPath, String projectName, String productName, boolean isSVN) throws IOException {
         Process process = new Process();
-        if (initRepository) {
-            process.initGitRepository(scatteringFolderPath + projectName);
-            process.saveGitRepository(scatteringFolderPath + projectName + "/gitRepository.data");
+        
+        File gitRepository = new File(scatteringFolderPath + File.separator + projectName + File.separator + "gitRepository.data");
+        
+        if (!gitRepository.exists()) {
+            process.initGitRepository(scatteringFolderPath + File.separator + projectName);
+            process.saveGitRepository(scatteringFolderPath + File.separator + projectName + File.separator + "gitRepository.data");
         } else {
-            process.initGitRepositoryFromFile(scatteringFolderPath + projectName + "/gitRepository.data");
+            process.initGitRepositoryFromFile(scatteringFolderPath + File.separator + projectName + File.separator + "gitRepository.data");
         }
+        
+        File issueRepository = new File(scatteringFolderPath + File.separator + projectName + File.separator + "issueRepository.data");
 
-        if (initIssueTracker) {
+        if (!issueRepository.exists()) {
             process.initIssueTrackerRepository(issueTrackerPath, productName, issueTracker, isSVN);
-            process.saveIssueTrackerRepository(scatteringFolderPath + projectName + "/issueRepository.data");
+            process.saveIssueTrackerRepository(scatteringFolderPath + File.separator + projectName + File.separator + "issueRepository.data");
         } else {
-            process.initIssueTrackerRepositoryFromFile(scatteringFolderPath + projectName + "/issueRepository.data", issueTracker);
+            process.initIssueTrackerRepositoryFromFile(scatteringFolderPath + File.separator + projectName + File.separator + "issueRepository.data", issueTracker);
         }
 
         //Run szz

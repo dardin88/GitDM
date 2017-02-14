@@ -21,7 +21,6 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 public class Jira {
 
     public static List<Bug> extractBug(String address, String projectName, boolean isSVN) throws MalformedURLException {
@@ -275,7 +274,7 @@ public class Jira {
     private static void setInvolvedCommit(Bug issueToAdd, String address, String projectName, String patchURL, boolean isSVN) throws MalformedURLException {
 
         Process process = new Process();
-        process.initGitRepositoryFromFile("/home/sesa/Development/scattering/" + projectName.toLowerCase() + "/gitRepository.data");
+        process.initGitRepositoryFromFile("/home/dardin88/Desktop/emse_data/" + projectName.toLowerCase() + "/gitRepository.data");
         GitRepository repository = process.getGitRepository();
 
         String url = address + "browse/" + projectName + "-" + issueToAdd.getID() + "?jql=project+%3D+"
@@ -286,7 +285,11 @@ public class Jira {
 
         BrowserEngine browser = BrowserFactory.getWebKit();
         Page page = browser.navigate(url);
-        page.wait(10000);
+        try {
+            page.wait(10000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Jira.class.getName()).log(Level.SEVERE, null, ex);
+        }
         try {
             List<Element> list = page.getDocument().queryAll(".changesetid");
             System.out.println("Numero di commit in list: " + list.size());
@@ -303,7 +306,7 @@ public class Jira {
             } else {
                 for (Element e : list) {
                     System.out.println(projectName + "-" + issueToAdd.getID() + ": " + e.getText());
-                    Commit fix = repository.getCommitByID(e.getText(), isSVN);
+                    Commit fix = repository.getCommitByID(e.getText().get(), isSVN);
                     if (fix != null) {
                         System.out.println("Fix: " + fix);
                         issueToAdd.setFix(fix);
@@ -317,8 +320,9 @@ public class Jira {
     }
 
     private static String retrieveRevision(boolean isSVN, String patchURL) throws MalformedURLException {
-        if (patchURL == null)
+        if (patchURL == null) {
             return null;
+        }
         URL url = new URL(patchURL);
         if (isSVN) {
             String regexInvolvedClass = Pattern.quote("--- ")
@@ -348,7 +352,6 @@ public class Jira {
             return null;
         }
     }
-
 
     private static String cleanDate(String date) {
         Pattern space = Pattern.compile(" ");

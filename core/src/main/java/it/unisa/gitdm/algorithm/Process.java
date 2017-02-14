@@ -22,11 +22,10 @@ import java.util.logging.Logger;
 
 /**
  * @author Tufano Michele - tufanomichele89@gmail.com
- *         <p/>
  *         GitDM - Git Data Mining
  */
 public class Process {
-
+    
     private GitRepository gitRepository;
 
     private BugTrackingSystemRepository issueRepository;
@@ -46,6 +45,7 @@ public class Process {
      * rispetto a tutte le altre classi finora committate (copio in un file di
      * testo le classi committate, una volta ogni commit) - Somiglianza
      * strutturale
+     * @param directoryPath
      */
     public void initGitRepository(String directoryPath) {
         this.gitRepository = new GitRepository();
@@ -323,7 +323,7 @@ public class Process {
                         int info8;
                         try {
                             info8 = Integer.parseInt(commitInfo[8]);
-                        } catch (Exception e) {
+                        } catch (NumberFormatException e) {
                             info8 = 0;
                         }
                         countAutInfo8++;
@@ -336,7 +336,7 @@ public class Process {
                         int info9;
                         try {
                             info9 = Integer.parseInt(commitInfo[9]);
-                        } catch (Exception e) {
+                        } catch (NumberFormatException e) {
                             info9 = 0;
                         }
                         countAutInfo9++;
@@ -349,7 +349,7 @@ public class Process {
                         int info10;
                         try {
                             info10 = Integer.parseInt(commitInfo[10]);
-                        } catch (Exception e) {
+                        } catch (NumberFormatException e) {
                             info10 = 0;
                         }
                         countAutInfo10++;
@@ -362,7 +362,7 @@ public class Process {
                         int info11;
                         try {
                             info11 = Integer.parseInt(commitInfo[11]);
-                        } catch (Exception e) {
+                        } catch (NumberFormatException e) {
                             info11 = 0;
                         }
                         countAutInfo11++;
@@ -375,7 +375,7 @@ public class Process {
                         double info12;
                         try {
                             info12 = Double.parseDouble(commitInfo[12]);
-                        } catch (Exception e) {
+                        } catch (NumberFormatException e) {
                             info12 = 0;
                         }
                         countAutInfo12++;
@@ -388,7 +388,7 @@ public class Process {
                         double info13;
                         try {
                             info13 = Double.parseDouble(commitInfo[13]);
-                        } catch (Exception e) {
+                        } catch (NumberFormatException e) {
                             info13 = 0;
                         }
                         if (info13 > 0) {
@@ -401,7 +401,7 @@ public class Process {
                         double info14;
                         try {
                             info14 = Double.parseDouble(commitInfo[14]);
-                        } catch (Exception e) {
+                        } catch (NumberFormatException e) {
                             info14 = 0;
                         }
                         countAutInfo14++;
@@ -414,7 +414,7 @@ public class Process {
                         double info15;
                         try {
                             info15 = Double.parseDouble(commitInfo[15]);
-                        } catch (Exception e) {
+                        } catch (NumberFormatException e) {
                             info15 = 0;
                         }
                         if (info15 > 0) {
@@ -427,7 +427,7 @@ public class Process {
                         double info16;
                         try {
                             info16 = Double.parseDouble(commitInfo[16]);
-                        } catch (Exception e) {
+                        } catch (NumberFormatException e) {
                             info16 = 0;
                         }
                         countAutInfo16++;
@@ -440,7 +440,7 @@ public class Process {
                         double info17;
                         try {
                             info17 = Double.parseDouble(commitInfo[17]);
-                        } catch (Exception e) {
+                        } catch (NumberFormatException e) {
                             info17 = 0;
                         }
                         if (info17 > 0) {
@@ -453,7 +453,7 @@ public class Process {
                         double info18;
                         try {
                             info18 = Double.parseDouble(commitInfo[18]);
-                        } catch (Exception e) {
+                        } catch (NumberFormatException e) {
                             info18 = 0;
                         }
                         countAutInfo18++;
@@ -466,7 +466,7 @@ public class Process {
                         double info19;
                         try {
                             info19 = Double.parseDouble(commitInfo[19]);
-                        } catch (Exception e) {
+                        } catch (NumberFormatException e) {
                             info19 = 0;
                         }
                         if (info19 > 0) {
@@ -479,7 +479,7 @@ public class Process {
                         double info20;
                         try {
                             info20 = Double.parseDouble(commitInfo[20]);
-                        } catch (Exception e) {
+                        } catch (NumberFormatException e) {
                             info20 = 0;
                         }
                         countAutInfo20++;
@@ -492,7 +492,7 @@ public class Process {
                         double info21;
                         try {
                             info21 = Double.parseDouble(commitInfo[21]);
-                        } catch (Exception e) {
+                        } catch (NumberFormatException e) {
                             info21 = 0;
                         }
                         if (info21 > 0) {
@@ -505,7 +505,7 @@ public class Process {
                         double info22;
                         try {
                             info22 = Double.parseDouble(commitInfo[22]);
-                        } catch (Exception e) {
+                        } catch (NumberFormatException e) {
                             info22 = 0;
                         }
                         countAutInfo22++;
@@ -518,7 +518,7 @@ public class Process {
                         double info23;
                         try {
                             info23 = Double.parseDouble(commitInfo[23]);
-                        } catch (Exception e) {
+                        } catch (NumberFormatException e) {
                             info23 = 0;
                         }
                         if (info23 > 0) {
@@ -531,7 +531,7 @@ public class Process {
                         double info24;
                         try {
                             info24 = Double.parseDouble(commitInfo[24]);
-                        } catch (Exception e) {
+                        } catch (NumberFormatException e) {
                             info24 = 0;
                         }
                         countAutInfo24++;
@@ -544,7 +544,7 @@ public class Process {
                         double info25;
                         try {
                             info25 = Double.parseDouble(commitInfo[25]);
-                        } catch (Exception e) {
+                        } catch (NumberFormatException e) {
                             info25 = 0;
                         }
                         if (info25 > 0) {
@@ -557,7 +557,7 @@ public class Process {
                         double info26;
                         try {
                             info26 = Double.parseDouble(commitInfo[26]);
-                        } catch (Exception e) {
+                        } catch (NumberFormatException e) {
                             info26 = 0;
                         }
                         countAutInfo26++;
@@ -570,7 +570,7 @@ public class Process {
                         double info27;
                         try {
                             info27 = Double.parseDouble(commitInfo[27]);
-                        } catch (Exception e) {
+                        } catch (NumberFormatException e) {
                             info27 = 0;
                         }
                         if (info27 > 0) {
@@ -904,7 +904,7 @@ public class Process {
                         int info8;
                         try {
                             info8 = Integer.parseInt(commitInfo[8]);
-                        } catch (Exception e) {
+                        } catch (NumberFormatException e) {
                             info8 = 0;
                         }
                         countAutInfo8++;
@@ -917,7 +917,7 @@ public class Process {
                         int info9;
                         try {
                             info9 = Integer.parseInt(commitInfo[9]);
-                        } catch (Exception e) {
+                        } catch (NumberFormatException e) {
                             info9 = 0;
                         }
                         countAutInfo9++;
@@ -930,7 +930,7 @@ public class Process {
                         int info10;
                         try {
                             info10 = Integer.parseInt(commitInfo[10]);
-                        } catch (Exception e) {
+                        } catch (NumberFormatException e) {
                             info10 = 0;
                         }
                         countAutInfo10++;
@@ -943,7 +943,7 @@ public class Process {
                         int info11;
                         try {
                             info11 = Integer.parseInt(commitInfo[11]);
-                        } catch (Exception e) {
+                        } catch (NumberFormatException e) {
                             info11 = 0;
                         }
                         countAutInfo11++;
@@ -956,7 +956,7 @@ public class Process {
                         double info12;
                         try {
                             info12 = Double.parseDouble(commitInfo[12]);
-                        } catch (Exception e) {
+                        } catch (NumberFormatException e) {
                             info12 = 0;
                         }
                         countAutInfo12++;
@@ -969,7 +969,7 @@ public class Process {
                         double info13;
                         try {
                             info13 = Double.parseDouble(commitInfo[13]);
-                        } catch (Exception e) {
+                        } catch (NumberFormatException e) {
                             info13 = 0;
                         }
                         if (info13 > 0) {
@@ -982,7 +982,7 @@ public class Process {
                         double info14;
                         try {
                             info14 = Double.parseDouble(commitInfo[14]);
-                        } catch (Exception e) {
+                        } catch (NumberFormatException e) {
                             info14 = 0;
                         }
                         countAutInfo14++;
@@ -995,7 +995,7 @@ public class Process {
                         double info15;
                         try {
                             info15 = Double.parseDouble(commitInfo[15]);
-                        } catch (Exception e) {
+                        } catch (NumberFormatException e) {
                             info15 = 0;
                         }
                         if (info15 > 0) {
@@ -1008,7 +1008,7 @@ public class Process {
                         double info16;
                         try {
                             info16 = Double.parseDouble(commitInfo[16]);
-                        } catch (Exception e) {
+                        } catch (NumberFormatException e) {
                             info16 = 0;
                         }
                         countAutInfo16++;
@@ -1021,7 +1021,7 @@ public class Process {
                         double info17;
                         try {
                             info17 = Double.parseDouble(commitInfo[17]);
-                        } catch (Exception e) {
+                        } catch (NumberFormatException e) {
                             info17 = 0;
                         }
                         if (info17 > 0) {
@@ -1034,7 +1034,7 @@ public class Process {
                         double info18;
                         try {
                             info18 = Double.parseDouble(commitInfo[18]);
-                        } catch (Exception e) {
+                        } catch (NumberFormatException e) {
                             info18 = 0;
                         }
                         countAutInfo18++;
@@ -1047,7 +1047,7 @@ public class Process {
                         double info19;
                         try {
                             info19 = Double.parseDouble(commitInfo[19]);
-                        } catch (Exception e) {
+                        } catch (NumberFormatException e) {
                             info19 = 0;
                         }
                         if (info19 > 0) {
