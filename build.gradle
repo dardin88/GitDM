@@ -52,3 +52,14 @@ project(':initRepo') {
         compile group: 'commons-io', name: 'commons-io', version: '2.4'
     }
 }
+
+project(':codeReviewExtractor') {
+    if (!hasProperty('mainClass')) {
+        
+    }
+    
+    dependencies {
+        compile group: 'org.json', name: 'json', version: '20160810'
+        compile group: 'org.apache.clerezza.ext', name: 'org.json.simple', version: '0.4'
+    }
+}
