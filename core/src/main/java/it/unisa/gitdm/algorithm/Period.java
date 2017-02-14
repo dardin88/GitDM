@@ -1,5 +1,8 @@
-package it.unisa.gitdm.bean;
+package it.unisa.gitdm.algorithm;
 
+import it.unisa.gitdm.bean.Change;
+import it.unisa.gitdm.bean.Commit;
+import it.unisa.gitdm.bean.Developer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

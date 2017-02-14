@@ -18,7 +18,6 @@ import java.util.logging.Logger;
 
 /**
  * @author Tufano Michele - tufanomichele89@gmail.com
- *         <p/>
  *         GitDM - Git Data Mining
  */
 public class Git {
@@ -135,7 +134,7 @@ public class Git {
                     } else {
                         commit.setFeatureIntroduction(false);
                     }
-
+                    
                     // generateChanges
                     commit.setChanges(generateChanges(directory, commit));
 
@@ -437,8 +436,8 @@ public class Git {
         Process p = null;
         try {
             p = Runtime.getRuntime().exec(cmd);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            Logger.getLogger(Git.class.getName()).log(Level.SEVERE, null, ex);
         }
         BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
         p.destroy();

@@ -1,8 +1,8 @@
 package it.unisa.gitdm.experiments;
 
-import it.unisa.gitdm.algorithm.CommitGoalTagger;
-import it.unisa.gitdm.algorithm.Ownership;
+import it.unisa.gitdm.algorithm.Period;
 import it.unisa.gitdm.algorithm.Process;
+import it.unisa.gitdm.algorithm.ProjectStatistics;
 import it.unisa.gitdm.bean.*;
 import it.unisa.gitdm.metrics.CKMetrics;
 import it.unisa.gitdm.metrics.HistoricalMetrics;
@@ -19,12 +19,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 
 /**
  * @author Giuderos
@@ -32,8 +29,8 @@ import java.util.logging.Logger;
 class EvaluateMetrics {
 
     public EvaluateMetrics(String projectName, String issueTracker, String issueTrackerPath,
-                           String productName, String periodLength, String baseFolderPath,
-                           String scatteringFolderPath) {
+            String productName, String periodLength, String baseFolderPath,
+            String scatteringFolderPath) {
 
         Process process = new Process();
         process.initGitRepositoryFromFile(scatteringFolderPath + projectName
@@ -91,10 +88,8 @@ class EvaluateMetrics {
                         + "isBuggy\n");
 
                 CalculateBuggyFiles cbf = new CalculateBuggyFiles(scatteringFolderPath,
-                        projectName, issueTracker, issueTrackerPath, productName,
-                        false, false, false);
+                        projectName, issueTracker, issueTrackerPath, productName, false);
                 List<FileBean> periodBuggyFiles = cbf.getBuggyFiles();
-
 
                 String projectPath = baseFolderPath + projectName;
                 File workTreeFolder = new File(baseFolderPath + "wd");
@@ -185,13 +180,13 @@ class EvaluateMetrics {
                             int lastIndex = file.getPath().lastIndexOf("/");
                             ACS = HistoricalMetrics.averageCommitSize(file.getPath().substring(lastIndex),
                                     p.getCommits());
-                            String OWN = this.getOwner(file.getPath(), process);
-                            double ENH = this.getNumberOfEnhancements(file.getPath(), process, p);
-                            double NF = this.getNumberOfNewFeatures(file.getPath(), process, p);
-                            double BF = this.getNumberOfBugFixing(file.getPath(), process, p);
-                            double REF = this.getNumberOfRefactoring(file.getPath(), process, p);
-                            int pastFault = this.getNumberOfPastFault(file.getPath(), process, p, periods);
-                            double MAF = this.getPosnett(file.getPath(), process, p);
+                            String OWN = ProjectStatistics.getOwner(file.getPath(), process);
+                            int ENH = ProjectStatistics.getNumberOfEnhancements(file.getPath(), process, p);
+                            int NF = ProjectStatistics.getNumberOfNewFeatures(file.getPath(), process, p);
+                            int BF = ProjectStatistics.getNumberOfBugFixing(file.getPath(), process, p);
+                            int REF = ProjectStatistics.getNumberOfRefactoring(file.getPath(), process, p);
+                            int pastFault = ProjectStatistics.getNumberOfPastFault(file.getPath(), process, p, periods);
+                            double MAF = ProjectStatistics.getPosnett(file.getPath(), process, p);
 
                             message1 += file.getPath() + ","
                                     + LOC + "," + CBO + "," + LCOM + "," + NOM + ","
@@ -235,175 +230,5 @@ class EvaluateMetrics {
             }
         }
         return totalNumberOfChanges;
-    }
-
-    private double getNumberOfEnhancements(String filePath, Process process, Period p) {
-
-        Ownership ownership = new Ownership(process.getGitRepository());
-        HashMap<String, List<Commit>> files = ownership.getFiles();
-        double enhancement = 0;
-        double totalCommit = 0;
-        for (Map.Entry<String, List<Commit>> fileMap : files.entrySet()) {
-            if (fileMap.getKey().equals(filePath)) {
-                totalCommit = fileMap.getValue().size();
-                for (Commit c : fileMap.getValue()) {
-                    //System.out.println("File: " +filePath + "FileMap: " + fileMap.getKey() + "Commit: "+c);
-                    if (p.getCommits().contains(c) && CommitGoalTagger.isEnhancement(c)) {
-                        enhancement++;
-                    }
-
-                }
-            }
-        }
-        if (enhancement > 0)
-            return (enhancement / totalCommit) * 100;
-        return 0;
-    }
-
-    private double getNumberOfNewFeatures(String filePath, Process process, Period p) {
-
-        Ownership ownership = new Ownership(process.getGitRepository());
-        HashMap<String, List<Commit>> files = ownership.getFiles();
-        double newFeatures = 0;
-        double totalCommit = 0;
-        for (Map.Entry<String, List<Commit>> fileMap : files.entrySet()) {
-            if (fileMap.getKey().equals(filePath)) {
-                totalCommit = fileMap.getValue().size();
-                for (Commit c : fileMap.getValue()) {
-                    if (p.getCommits().contains(c) && CommitGoalTagger.isNewFeature(c))
-                        newFeatures++;
-                }
-            }
-        }
-        if (newFeatures > 0)
-            return (newFeatures / totalCommit) * 100;
-        return 0;
-    }
-
-    private double getNumberOfBugFixing(String filePath, Process process, Period p) {
-
-        Ownership ownership = new Ownership(process.getGitRepository());
-        HashMap<String, List<Commit>> files = ownership.getFiles();
-        double bugFixing = 0;
-        double totalCommit = 0;
-        for (Map.Entry<String, List<Commit>> fileMap : files.entrySet()) {
-            if (fileMap.getKey().equals(filePath)) {
-                totalCommit = fileMap.getValue().size();
-                for (Commit c : fileMap.getValue()) {
-                    if (p.getCommits().contains(c) && CommitGoalTagger.isBugFixing(c))
-                        bugFixing++;
-                }
-            }
-        }
-        if (bugFixing > 0)
-            return (bugFixing / totalCommit) * 100;
-        return 0;
-    }
-
-    private double getNumberOfRefactoring(String filePath, Process process, Period p) {
-
-        Ownership ownership = new Ownership(process.getGitRepository());
-        HashMap<String, List<Commit>> files = ownership.getFiles();
-        double refactoring = 0;
-        double totalCommit = 0;
-        for (Map.Entry<String, List<Commit>> fileMap : files.entrySet()) {
-            if (fileMap.getKey().equals(filePath)) {
-                totalCommit = fileMap.getValue().size();
-                for (Commit c : fileMap.getValue()) {
-                    if (p.getCommits().contains(c) && CommitGoalTagger.isRefactoring(c))
-                        refactoring++;
-                }
-            }
-        }
-        if (refactoring > 0)
-            return (refactoring / totalCommit) * 100;
-        return 0;
-    }
-
-    private String getOwner(String filePath, Process process) {
-        Ownership ownership = new Ownership(process.getGitRepository());
-        HashMap<String, List<Commit>> files = ownership.getFiles();
-        String own = null;
-        for (Map.Entry<String, List<Commit>> fileMap : files.entrySet()) {
-            if (fileMap.getKey().equals(filePath)) {
-                HashMap<Author, Integer> authors = ownership.calculateAuthorsOnFile(fileMap);
-                Author owner = ownership.findOwner(authors, 40);
-                if (owner != null)
-                    own = owner.getEmail();
-            }
-        }
-        return own;
-    }
-
-    private int getNumberOfPastFault(String filePath, Process process, Period p, List<Period> periods) {
-        Ownership ownership = new Ownership(process.getGitRepository());
-        HashMap<String, List<Commit>> files = ownership.getFiles();
-        int pastFault = 0;
-        for (Map.Entry<String, List<Commit>> fileMap : files.entrySet()) {
-            if (fileMap.getKey().equals(filePath)) {
-                for (Period per : periods) {
-                    if (per.getId() < p.getId()) {
-                        //System.out.println("Periodo " + per.getId() + "\nCommit del Periodo: " + per.getCommits().size());
-                        for (Commit c : per.getCommits()) {
-                            if (fileMap.getValue().contains(c) && CommitGoalTagger.isBugFixing(c)) {
-                                //System.out.println("is Bug!");
-                                pastFault++;
-                            }
-                        }
-                    }
-
-                }
-            }
-        }
-        return pastFault;
-    }
-
-    private double getPosnett(String filePath, Process process, Period p) {
-        //System.out.println("FILE:"+filePath);
-        Ownership ownership = new Ownership(process.getGitRepository());
-        HashMap<String, List<Commit>> files = ownership.getFiles();
-        double totalCommit = 0;
-        double MAF = 0;
-        for (Map.Entry<String, List<Commit>> fileMap : files.entrySet()) {
-            if (fileMap.getKey().equals(filePath)) {
-                HashMap<Author, Integer> authors = ownership.calculateAuthorsOnFile(fileMap);
-                for (Commit c : fileMap.getValue()) {
-                    if (p.getCommits().contains(c)) {
-                        totalCommit++;
-                    }
-                }
-                double firstExpr = 0;
-                double secondExpr = 0;
-                for (Author a : authors.keySet()) {
-                    double authorCommit = 0;
-                    for (Commit c : fileMap.getValue()) {
-                        if (p.getCommits().contains(c)) {
-                            if (c.getAuthor().equals(a)) {
-                                authorCommit++;
-                            }
-                        }
-                    }
-                    if (authorCommit == 0 || p.getCommits(a).isEmpty()) {
-                        continue;
-                    }
-                    //System.out.println("Author:"+a+"\nAuthorCommit:"+authorCommit+"\ntotalCommit:"+totalCommit);
-                    double wij = authorCommit / totalCommit;
-                    //System.out.println("wij: "+wij);
-                    if (Double.isNaN(wij))
-                        wij = 0;
-                    double commitsAuthorSize = p.getCommits(a).size();
-                    double commitSize = p.getCommits().size();
-                    //System.out.println("Dj:"+commitsAuthorSize +"\nA:"+ commitSize);
-                    //System.out.println("ln: " + Math.log(commitsAuthorSize/commitSize));
-                    double ln = Math.log(commitsAuthorSize / commitSize);
-                    firstExpr = firstExpr + (wij * ln);
-                    secondExpr = secondExpr + (wij * Math.log(wij));
-
-                }
-                MAF = (-firstExpr) - (-secondExpr);
-                //System.out.println("MAF:"+ MAF);    
-            }
-        }
-        return MAF;
     }
 }
